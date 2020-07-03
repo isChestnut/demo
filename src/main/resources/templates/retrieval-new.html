@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            font-family: "微软雅黑";
+            font-size: 14px;
+        }
+
+        #l-map {
+            height: 90%;
+            width: 100%;
+        }
+
+        #r-result {
+            width: 100%;
+        }
+        #lng{display: none}
+        #lat{display: none}
+        #search-btn{cursor:pointer}
+        #input-group
+        {
+            
+        }
+    </style>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=KyKYGhKT1DYisflH6Lk8OeGxEUYrFKRS"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SwFGl9r2HQ5jAPfE4xfPxeA7qwK3UMje"></script>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <title>关键字输入提示词条</title>
+</head>
+
+<body>
+
+
+<div class="input-group">
+    <input type="text" id="suggestId" class="form-control">
+    <span class="input-group-addon" id="search-btn">搜索</span>
+</div>
+<!--<div id="r-result">请输入:
+    <input type="text" id="suggestId" size="20" value="百度" style="width:150px;" /><button id="search-btn">搜索</button>
+</div>-->
+<div id="searchResultPanel" style="border:1px solid #C0C0C0;width:150px;height:auto; display:none;"></div>
+<input type="text" id="lng"/>
+<input type="text" id="lat"/>
+<div id="l-map"></div>
+</body>
+
+</html>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    (function(){
+        // 百度地图API功能
+        function G(id) {
+            return document.getElementById(id);
+        }
+        var map = new BMap.Map("l-map");
+        var lng=G('lng');
+        var lat=G('lat');
+        var searchBtn = G('search-btn');
+        var myValue;
+        var local=null;
+        var ac=null;
+        var pp =null;
+        var geolocation = new BMap.Geolocation();
+        ac = new BMap.Autocomplete({
+            "input": "suggestId",
+            "location": map
+        });
+        geolocation.getCurrentPosition(function(r){
+            if(this.getStatus() == BMAP_STATUS_SUCCESS){
+                point = new BMap.Point(r.point.lng, +r.point.lat);
+                map.centerAndZoom(point, 15);
+            }
+        })
+        map.enableScrollWheelZoom();//开启鼠标滚轮缩放
+        ac.addEventListener("onhighlight", function(e) { //鼠标放在下拉列表上的事件
+            var str = "";
+            var _value = e.fromitem.value;
+            var value = "";
+            if(e.fromitem.index > -1) {
+                value = _value.province + _value.city + _value.district + _value.street + _value.business;
+            }
+            str = "FromItem<br />index = " + e.fromitem.index + "<br />value = " + value;
+            value = "";
+            if(e.toitem.index > -1) {
+                _value = e.toitem.value;
+                value = _value.province + _value.city + _value.district + _value.street + _value.business;
+            }
+            str += "<br />ToItem<br />index = " + e.toitem.index + "<br />value = " + value;
+            G("searchResultPanel").innerHTML = str;
+        });
+        function myFun() {
+            pp=local.getResults().getPoi(0).point; //获取第一个智能搜索的结果
+            map.centerAndZoom(pp, 18);
+            map.addOverlay(new BMap.Marker(pp)); //添加标注
+            showInfo(pp);
+        }
+        function setPlace() {
+            map.clearOverlays(); //清除地图上所有覆盖物
+            local = new BMap.LocalSearch(map, { //智能搜索
+                onSearchComplete: myFun
+            });
+            local.search(myValue);
+            pp=local.getResults().getPoi(0).point; //获取第一个智能搜索的结果
+            showInfo(pp);
+        }
+        function showInfo(e){
+            lng.value=e.lng;
+            lat.value=e.lat;
+            initMap2(e);
+        }
+        ac.addEventListener("onconfirm", function(e) { //鼠标点击下拉列表后的事件
+            var _value = e.item.value;
+            myValue = _value.province + _value.city + _value.district + _value.street + _value.business;
+            G("searchResultPanel").innerHTML = "onconfirm<br />index = " + e.item.index + "<br />myValue = " + myValue;
+            setPlace();
+
+        });
+        searchBtn.addEventListener("click", function() {//点击搜索
+            map.clearOverlays(); //清除地图上所有覆盖物
+            local = new BMap.LocalSearch(map, { //智能搜索
+                onSearchComplete: myFun
+            });
+            local.search(document.getElementById("suggestId").value);
+
+        });
+        function initMap2(e){
+            //var map2 = new BMap.Map("allmap");            // 创建Map实例
+            //var mPoint = new BMap.Point(e.point.lng, e.point.lat);
+            var mPoint = e;
+            map.enableScrollWheelZoom();
+            map.centerAndZoom(mPoint,15);
+            var circle = new BMap.Circle(mPoint,5000,{fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3});
+            map.clearOverlays();
+            map.addOverlay(circle);
+            var local2 =  new BMap.LocalSearch(map, {
+				renderOptions: {map: map, autoViewport: false},
+				onSearchComplete : function(results) {
+                    var locationArray=new Array(0);
+					for(var result of results){
+						var IrArrays = result.Ir;
+                        for(var r of IrArrays){
+                            locationArray.push(r);
+
+                        }
+					}
+					console.log(JSON.stringify(locationArray));
+                    $.ajax({
+                        url: "/location/addLocationRecord",//请求路径
+                        type: "POST",//请求方式
+                        contentType:'application/json;charset=utf-8',
+                        dataType:"JSON",
+                        data: JSON.stringify(locationArray),
+                        success: function (res) {  //成功回调函数--res是响应结果
+                            alert(res);
+                        }
+                    });
+				}
+			});
+            var location=new Array("加油站","福特4s店");
+            local2.searchNearby(location,mPoint,5000);
+        }
+
+    })()
+
+</script>

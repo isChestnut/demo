@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        html,body{
+            height:100%;
+        }
+
+        #login{
+            position: absolute;
+            top: 50%;
+            left:50%;
+            margin: -150px 0 0 -150px;
+            width: 300px;
+            height: 300px;
+        }
+        #login h1{
+            color: #fff;
+            text-shadow:0 0 10px;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+        h1{
+            font-size: 2em;
+            margin: 0.67em 0;
+        }
+        input{
+            width: 278px;
+            height: 18px;
+            margin-bottom: 10px;
+            outline: none;
+            padding: 10px;
+            font-size: 13px;
+            color: #fff;
+            text-shadow:1px 1px 1px;
+            border-top: 1px solid #312E3D;
+            border-left: 1px solid #312E3D;
+            border-right: 1px solid #312E3D;
+            border-bottom: 1px solid #56536A;
+            border-radius: 4px;
+            background-color: #2D2D3F;
+        }
+        .but{
+            margin-top: 30px;
+            width: 300px;
+            min-height: 20px;
+            display: block;
+            background-color: #4a77d4;
+            border: 1px solid #3762bc;
+            color: #fff;
+            padding: 9px 14px;
+            font-size: 15px;
+            line-height: normal;
+            border-radius: 5px;
+        }
+        #glogin{
+            width: 300px;
+            height: 40px;
+            margin-top:50px;
+        }
+    </style>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <!-- Bootstrap table -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.css">
+</head>
+<body style="background-color: #4A374A">
+<div id="login">
+    <h1>Login</h1>
+    <form method="post">
+        <button id="glogin" type="button" class="btn btn-success" onclick="gitLogin()">github login</button>
+        <button class="but" type="submit" onclick="login()">游客登录</button>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script type="application/javascript">
+    function gitLogin(){
+        window.location.href="http://127.0.0.1:8090/account/github/githubLogin";
+    }
+    function touristLogin(){
+        window.location.href="http://127.0.0.1:8090/account/github/touristLogin";
+    }
+</script>
+</body>
+</html>

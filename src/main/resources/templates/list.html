@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <!-- Bootstrap table -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.css">
+</head>
+<body>
+<table id="table"></table>
+</table>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src="https://unpkg.com/bootstrap-table@1.15.4/dist/bootstrap-table.min.js"></script>
+
+<script>
+    //初始化表格,动态从服务器加载数据
+    $(function(){
+        $('#table').bootstrapTable({
+            url: '/location/getCommonLocationByUser',        // 表格数据来源
+            columns: [ {
+                field: 'userId',
+                title: '用户id'
+            }, {
+                field: 'locationName',
+                title: '地址名称'
+            }, {
+                field: 'locationTypeName',
+                title: '地址类型'
+            }, {
+                field: 'numberOfSelect',
+                title: '查询计次'
+            }]
+        });
+    });
+</script>
+</body>
+</html>
